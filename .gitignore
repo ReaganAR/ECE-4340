@@ -52,3 +52,12 @@ qtcreator-*
 
 # Catkin custom files
 CATKIN_IGNORE
+
+# ViGIR stuff
+*.ppm
+TOOLBOX_calib/
+calib_doc/
+__MACOSX/
+images/
+*.zip
+
