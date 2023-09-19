@@ -1,0 +1,3 @@
+<launch>
+	<node name="circleNode" pkg="lab02" type="circle.py" output="screen"></node>
+</launch>
