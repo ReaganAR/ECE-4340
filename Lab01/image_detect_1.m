@@ -52,8 +52,8 @@ hold off
 
 
 % 3D reconstruction
-leftcal = load('/nfshome/car8kh/Downloads/VIGIR/images/Calib_Results_left.mat');
-rightcal = load('/nfshome/car8kh/Downloads/VIGIR/images/Calib_Results_right.mat');
+leftcal = load('images/Calib_Results_left.mat');
+rightcal = load('images/Calib_Results_right.mat');
 
 kleft = leftcal.KK;
 kright = rightcal.KK;
