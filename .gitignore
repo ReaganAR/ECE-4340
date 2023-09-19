@@ -61,3 +61,5 @@ __MACOSX/
 images/
 *.zip
 
+catkin_ws/docker/opt
+

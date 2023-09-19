@@ -8,6 +8,7 @@ else
 	XAUTH=/tmp/.docker.xauth
 
 	docker run -it --rm \
+	    --volume="./docker/opt/ros/kinetic/share/turtlebot_stage:/opt/ros/kinetic/share/turtlebot_stage" \
 	    -w /home/catkin_ws \
 	    --name=rosdocker \
 	    --env="DISPLAY=$DISPLAY" \
