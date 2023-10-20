@@ -23,7 +23,7 @@ if __name__=='__main__':
     rate = rospy.Rate(10)
 
     # Set up velocity messages
-    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    vel_pub = rospy.Publisher('/obstacle/cmd_vel', Twist, queue_size=1)
     bump_sub = rospy.Subscriber('/bumper', Bumper, bumper_callback)
 
     vel_msg = Twist()
@@ -38,21 +38,7 @@ if __name__=='__main__':
             vel_msg.angular.z = 0.4
         if bumper[0] is True and bumper[1] is True:
             vel_msg.angular.z = 0
-            vel_msg.linear.x = -0.3
-        # if bumper[0] is True or bumper[1] is True:
-        #     t0 = rospy.Time.now().to_sec()
-        #     currentDistance = 0
-
-        #     while(currentDistance < 0.15):
-        #         # Publish velocity
-        #         vel_msg.linear.x = -0.3
-        #         vel_pub.publish(vel_msg)
-
-        #         t1=rospy.Time.now().to_sec()
-        #         currentDistance = -0.3 * (t1 - t0)
-        #         rate.sleep()
-
-
+            vel_msg.linear.x = -0.15
 
         vel_pub.publish(vel_msg)
         rate.sleep()
