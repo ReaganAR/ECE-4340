@@ -62,4 +62,6 @@ images/
 *.zip
 
 catkin_ws/docker/opt
+CMakeLists.txt
+*.xml
 
