@@ -1,4 +1,0 @@
-<launch>
-	<remap from="/obstacle_avoidance/cmd_vel" to="/cmd_vel"/>
-	<node name="obstacle_avoidance" pkg="lab04" type="obstacles.py" output="screen"></node>
-</launch>
