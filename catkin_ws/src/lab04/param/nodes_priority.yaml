@@ -4,11 +4,11 @@ subscribers:
     timeout:     0.25
     priority:    10
   - name:        "Keyboard Operation input"
-    topic:       "turtlebot_teleop/cmd_vel"
+    topic:       "/keyop/cmd_vel"
     timeout:     1
     priority:    8
   - name:        "Dead Reckoning"
-    topic:       "deadreckoning/cmd_vel"
+    topic:       "/deadreckoning/cmd_vel"
     timeout:     0.3
     priority:    4
 publisher:       "/cmd_vel"

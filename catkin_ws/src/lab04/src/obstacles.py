@@ -4,13 +4,26 @@ import rospy
 from geometry_msgs.msg import Twist
 from ca_msgs.msg import Bumper
 
-bumper = [None, None]
-
 def bumper_callback(data):
-    global bumper
+    bumper = [0,0]
 
     bumper[0] = data.is_left_pressed
     bumper[1] = data.is_right_pressed
+
+    vel_msg.linear.x = 0
+    vel_msg.angular.z = 0
+
+    if bumper[0] is True:
+            vel_msg.angular.z = -0.4
+    if bumper[1] is True:
+        vel_msg.angular.z = 0.4
+    if bumper[0] is True and bumper[1] is True:
+        vel_msg.angular.z = 0
+        vel_msg.linear.x = -0.15
+
+    if bumper[0] is True or bumper[1] is True:
+        vel_pub.publish(vel_msg)
+    
 
 
 """
@@ -29,16 +42,4 @@ if __name__=='__main__':
     vel_msg = Twist()
 
     while not rospy.is_shutdown():
-        vel_msg.linear.x = 0
-        vel_msg.angular.z = 0
-
-        if bumper[0] is True:
-            vel_msg.angular.z = -0.4
-        if bumper[1] is True:
-            vel_msg.angular.z = 0.4
-        if bumper[0] is True and bumper[1] is True:
-            vel_msg.angular.z = 0
-            vel_msg.linear.x = -0.15
-
-        vel_pub.publish(vel_msg)
-        rate.sleep()
+        rospy.spin()
