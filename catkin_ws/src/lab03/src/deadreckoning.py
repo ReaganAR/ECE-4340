@@ -11,8 +11,6 @@ import os
 from geometry_msgs.msg import Twist
 from nav_msgs.msg import Odometry
 
-import os
-
 """
 Global Variables
 """
@@ -118,27 +116,49 @@ if __name__=='__main__':
 
     vel_msg = Twist()
 
-    goalCoords = [0,0,0]
-    goalCoords[0]=input("x: ")
-    goalCoords[1]=input("y: ")
-    goalCoords[2]=input("theta: ") 
-
-    initGoal(goalCoords)
-
     while not rospy.is_shutdown():
-        goal_H_curr = numpy.dot(numpy.linalg.inv(init_H_goal), init_H_curr)
+        goalCoords = [0,0,0]
+        goalCoords[0]=input("x: ")
+        goalCoords[1]=input("y: ")
+        goalCoords[2]=input("theta: ") 
 
-        cart2pol()
+        initGoal(goalCoords)
 
-        vel_msg.linear.x = GAIN_RHO * polarCoords[0]
-        vel_msg.angular.z = (GAIN_ALPHA * polarCoords[1]) + (GAIN_BETA * polarCoords[2])
-        vel_pub.publish(vel_msg)
+        while not rospy.is_shutdown():
+            goal_H_curr = numpy.dot(numpy.linalg.inv(init_H_goal), init_H_curr)
 
-        # Stop when close enough to threshold
-        pos_thresh = 0.05
-        angle_thresh = 0.15
+            cart2pol()
 
-        if abs(goalCoords[0] - init_H_curr[0][3]) <= pos_thresh and abs(goalCoords[1] - init_H_curr[1][3]) <= pos_thresh and abs(goalCoords[2] - rpy[2]) <= angle_thresh:
-            break
+            vel_msg.linear.x = GAIN_RHO * polarCoords[0]
+            vel_msg.angular.z = (GAIN_ALPHA * polarCoords[1]) + (GAIN_BETA * polarCoords[2])
+            vel_pub.publish(vel_msg)
+
+            # Stop when close enough to threshold
+            pos_thresh = 0.05
+            angle_thresh = 0.15
+            linear_v_thresh = 0.02
+            angular_v_thresh = 0.02
+
+            if abs(goalCoords[0] - init_H_curr[0][3]) <= pos_thresh and abs(goalCoords[1] - init_H_curr[1][3]) <= pos_thresh and abs(goalCoords[2] - rpy[2]) <= angle_thresh:
+                break
             
-        rate.sleep()
+            if abs(vel_msg.linear.x) <= linear_v_thresh and abs(vel_msg.angular.z) <= angular_v_thresh:
+                break
+
+            os.system('clear')
+            print("linear_v: {} / angular_w: {}".format(vel_msg.linear.x, vel_msg.angular.z))
+
+            print("\nDesired Robot Pose: ")
+            print("desired_x: {}".format(goalCoords[0]))
+            print("desired_y: {}".format(goalCoords[1]))
+            print("desired_theta: {}".format(goalCoords[2]))
+
+            print("\nCurrent Robot Pose: ")
+            print("current_x: {}".format(init_H_curr[0][3]))
+            print("current_y: {}".format(init_H_curr[1][3]))
+            print("current_theta: {}".format(rpy[2]))
+
+
+
+
+            rate.sleep()

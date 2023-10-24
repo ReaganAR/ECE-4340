@@ -1,0 +1,12 @@
+<launch>
+	<arg name="nodelet_manager_name" value="nodelet_manager"/>
+	<arg name="config_file" value="$(find lab04)/param/nodes_priority.yaml"/>
+	<node pkg="nodelet" type="nodelet" name="$(arg nodelet_manager_name)" args="manager"/>
+	<include file="$(find yocs_cmd_vel_mux)/launch/cmd_vel_mux.launch">
+		<arg name="nodelet_manager_name" value="$(arg nodelet_manager_name)"/>
+		<arg name="config_file" value="$(arg config_file)"/>
+	</include>
+	<node name="dead_reckoning" pkg="lab03" type="deadreckoning.py" output="screen">
+	<remap from="/cmd_vel" to="/deadreckoning/cmd_vel"/>
+	</node>
+</launch>
