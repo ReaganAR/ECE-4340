@@ -2,15 +2,15 @@ import numpy as np
 import math
 
 #thetas = [0, 0, 0, 0, 0, 0]
-thetas = [30.003, 29.998, 29.997, 29.999, 29.997, 29.995]
+thetas = [30, 30, 30, 30, 30, 30]
 thetas = np.radians(thetas)
 
 dh_array = np.array([[thetas[0], 0, 0, -math.pi/2],
-                     [thetas[1], ((2 + 7/8)+(2 + 1/16)) * 25.4, 8 * 25.4, 0],
+                     [thetas[1], 125.4125, 203.2, 0],
                      [thetas[2], 0, 0, math.pi/2],
-                     [thetas[3], 8 * 25.4, 0, -math.pi/2],
+                     [thetas[3], 203.2, 0, -math.pi/2],
                      [thetas[4], 0, 0, math.pi/2],
-                     [thetas[5], 2.202* 25.4, 0, 0]])
+                     [thetas[5], 55.9308, 0, 0]])
 
 def A_matrix(theta, d, a, alpha):
     matrix = np.array([[math.cos(theta), -math.cos(alpha) * math.sin(theta), math.sin(alpha) * math.sin(theta), a * math.cos(theta)],
@@ -43,5 +43,8 @@ x = Tmatrix[0][3]
 y = Tmatrix[1][3]
 z = Tmatrix[2][3]
 
+print("OAT:")
 print(T_to_OAT(Tmatrix))
+
+print("XYZ:")
 print(x, y, z)
