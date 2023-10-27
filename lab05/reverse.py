@@ -46,9 +46,7 @@ def revmain(matrix):
     '''DETERMINE THETA 3'''
     rbig = (Px**2 + Py**2 + Pz**2 - a2**2 - d2**2 - d4**2)
     rsmall = 2 * a2 * d4
-    temptop = 2 * a2 * d4 * rbig
-    tempbot = 2 * a2 * d4 * math.sqrt(rsmall**2 - rbig*2)
-    thetas[2] = math.atan2(temptop, tempbot)
+    thetas[2] = math.atan2(rbig, math.sqrt(rsmall**2 - rbig*2))
 
     '''DETERMINE THETA 2''' # SIGN ERROR SOMEWHERE, 180 deg off?
     rsmall = math.sqrt(Px**2 + Py**2 + Pz**2 - d2**2)
@@ -56,7 +54,7 @@ def revmain(matrix):
     sin2 = sintop / (rsmall**2)
     costop = - (a2 + (d4 * math.sin(thetas[2]))) * math.sqrt(Px**2 + Py**2 - d2**2) + (d4 * math.cos(thetas[2]) * Pz)
     cos2 = costop / (rsmall**2)
-    thetas[1] = math.atan2(-sin2, -cos2)
+    thetas[1] = math.atan2(-sintop, -costop)
 
     '''DETERMINE THETA 4'''
     zero_T_three = calc_T3()
