@@ -1,16 +1,12 @@
 import numpy as np
 import math
 
-#thetas = [0, 0, 0, 0, 0, 0]
-thetas = [30, 30, 30, 30, 30, 30]
-thetas = np.radians(thetas)
-
-dh_array = np.array([[thetas[0], 0, 0, -math.pi/2],
-                     [thetas[1], 125.4125, 203.2, 0],
-                     [thetas[2], 0, 0, math.pi/2],
-                     [thetas[3], 203.2, 0, -math.pi/2],
-                     [thetas[4], 0, 0, math.pi/2],
-                     [thetas[5], 55.9308, 0, 0]])
+dh_array=    [[0, 0, 0, -math.pi/2],
+              [0, 125.4125, 203.2, 0],
+              [0, 0, 0, math.pi/2],
+              [0, 203.2, 0, -math.pi/2],
+              [0, 0, 0, math.pi/2],
+              [0, 55.9308, 0, 0]]
 
 def A_matrix(theta, d, a, alpha):
     matrix = np.array([[math.cos(theta), -math.cos(alpha) * math.sin(theta), math.sin(alpha) * math.sin(theta), a * math.cos(theta)],
@@ -36,15 +32,35 @@ def T_to_OAT(T_matrix):
 
     orientation = np.degrees(orientation)
 
-    return orientation, approach, tool
+    return [orientation, approach, tool]
 
-Tmatrix = calc_T()
-x = Tmatrix[0][3]
-y = Tmatrix[1][3]
-z = Tmatrix[2][3]
+def formain(thetas):
+    global dh_array
+    thetas = np.radians(thetas)
 
-print("OAT:")
-print(T_to_OAT(Tmatrix))
+    dh_array=[[thetas[0], 0, 0, -math.pi/2],
+              [thetas[1], 125.4125, 203.2, 0],
+              [thetas[2], 0, 0, math.pi/2],
+              [thetas[3], 203.2, 0, -math.pi/2],
+              [thetas[4], 0, 0, math.pi/2],
+              [thetas[5], 55.9308, 0, 0]]
+    
+    Tmatrix = calc_T()
+    x = Tmatrix[0][3]
+    y = Tmatrix[1][3]
+    z = Tmatrix[2][3]
+   
+    test= T_to_OAT(Tmatrix)
+    indice = 0
+    for f in test:
+        test[indice] = format(f, '.3f') 
+        indice = indice + 1
+    print("OAT:\t", test[0], '\t', test[1], '\t', test[2])
+    print("XYZ:\t", format(x, '.3f'), '\t', format(y, '.3f'), '\t', format(z, '.3f'))
 
-print("XYZ:")
-print(x, y, z)
+    return Tmatrix
+
+if __name__ == "__main__":
+    input = [30, 30, 30, 30, 30, 30]
+    
+    formain(input)
