@@ -33,10 +33,9 @@ def revmain(matrix):
     global Tmatrix, thetas
 
     Tmatrix = matrix
-    Px = Tmatrix[0][3]
-    Py = Tmatrix[1][3]
-    Pz = Tmatrix[2][3]
-
+    Px = Tmatrix[0][3] - ((d6) * Tmatrix[0][2])
+    Py = Tmatrix[1][3] - ((d6) * Tmatrix[1][2])
+    Pz = Tmatrix[2][3] - ((d6) * Tmatrix[2][2])
 
     '''DETERMINE THETA 1'''
     temptop = Py * math.sqrt(Px**2 + Py**2 - d2**2) - (d2 * Px)
@@ -44,16 +43,14 @@ def revmain(matrix):
     thetas[0] = math.atan2(temptop, tempbot)
 
     '''DETERMINE THETA 3'''
-    rbig = (Px**2 + Py**2 + Pz**2 - a2**2 - d2**2 - d4**2)
+    rbig = ((Px**2) + (Py**2) + (Pz**2) - (a2**2) - (d2**2) - (d4**2))
     rsmall = 2 * a2 * d4
-    thetas[2] = math.atan2(rbig, math.sqrt(rsmall**2 + rbig**2))
+    thetas[2] = math.atan2(rbig, math.sqrt(rsmall**2 - rbig**2))
 
-    '''DETERMINE THETA 2''' # SIGN ERROR SOMEWHERE, 180 deg off?
-    rsmall = math.sqrt(Px**2 + Py**2 + Pz**2 - d2**2)
+    '''DETERMINE THETA 2'''
     sintop = -Pz * (a2 + d4 * math.sin(thetas[2])) - (d4 * math.cos(thetas[2]) * math.sqrt(Px**2 + Py**2 - d2**2))
     costop = - (a2 + (d4 * math.sin(thetas[2]))) * math.sqrt(Px**2 + Py**2 - d2**2) + (d4 * math.cos(thetas[2]) * Pz)
-    thetas[1] = math.atan2(-sintop, -costop)
-
+    thetas[1] = math.atan(sintop / costop)
 
     '''DETERMINE THETA 4'''
     zero_T_three = calc_T3()

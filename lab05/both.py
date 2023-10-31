@@ -4,6 +4,7 @@ from reverse import revmain
 import numpy as np
 
 thetasboth = [30.0,30,30,30,30,30]
+#thetasboth = [30.0,20,60,30,30,20]
 Tmatrix = np.identity(4)
 
 print("Forward Kinematics from ", thetasboth)
