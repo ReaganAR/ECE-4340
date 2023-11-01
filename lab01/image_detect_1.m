@@ -10,11 +10,13 @@ columns=2;
 BIL= imfill(~imbinarize(BWL),'holes');
 BIR= imfill(~imbinarize(BWR),'holes');
 
-statsleft=regionprops(BIL, 'centroid', 'orientation', 'area');
+statsleft=regionprops(BIL, 'centroid', 'orientation', 'area', 'MajorAxisLength');
 centroidsleft = cat(1,statsleft.Centroid);
+orientsleft = cat(1,statsleft.Orientation);
 
-statsright=regionprops(BIR, 'centroid', 'orientation',  'area');
+statsright=regionprops(BIR, 'centroid', 'orientation',  'area', 'MajorAxisLength');
 centroidsright = cat(1,statsright.Centroid);
+orientsright = cat(1,statsright.Orientation);
 
 figure(1)
 subplot(rows,columns,1)
@@ -40,6 +42,14 @@ hold on
 imshow(BIL)
 title('Left binary image')
 plot(centroidsleft(:,1),centroidsleft(:,2),'b*')
+for i = 1 : length(orientsleft)
+    hlen = statsleft(i).MajorAxisLength/2;
+    cosOrient = cosd(orientsleft(i));
+    sinOrient = sind(orientsleft(i));
+    xcoords = centroidsleft(i,1) + hlen * [-cosOrient cosOrient];
+    ycoords = centroidsleft(i,2) + hlen * [sinOrient -sinOrient];
+    line(xcoords, ycoords);
+end
 hold off
 
 subplot(rows,columns,6)
@@ -47,6 +57,14 @@ hold on
 imshow(BIR)
 title('Right binary image')
 plot(centroidsright(:,1),centroidsright(:,2),'b*')
+for i = 1 : length(orientsright)
+    hlen = statsright(i).MajorAxisLength/2;
+    cosOrient = cosd(orientsright(i));
+    sinOrient = sind(orientsright(i));
+    xcoords = centroidsright(i,1) + hlen * [-cosOrient cosOrient];
+    ycoords = centroidsright(i,2) + hlen * [sinOrient -sinOrient];
+    line(xcoords, ycoords);
+end
 hold off
 
 
