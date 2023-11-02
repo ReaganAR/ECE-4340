@@ -1,6 +1,6 @@
 function[x, y, theta] = imagedetection()
-    I_left = imread('left3.ppm');
-    I_right = imread('right3.ppm');
+    I_left = imread('left30.ppm');
+    I_right = imread('right30.ppm');
 
     BWL=rgb2gray(I_left);
     BWR=rgb2gray(I_right);
@@ -12,9 +12,11 @@ function[x, y, theta] = imagedetection()
     BIR= imfill(~imbinarize(BWR),'holes');
 
     statsleft=regionprops(BIL, 'centroid', 'orientation', 'area', 'MajorAxisLength');
-    for i = 1 : size(statsleft, 2)
-        if statsleft(i).MajorAxisLength < 50
-            statsleft(i) = [];
+    if size(statsleft, 1) > 0
+        for i = 1 : size(statsleft, 2)
+            if statsleft(i).MajorAxisLength < 100
+                statsleft(i) = [];
+            end
         end
     end
     
@@ -23,9 +25,11 @@ function[x, y, theta] = imagedetection()
 
     statsright=regionprops(BIR, 'centroid', 'orientation',  'area', 'MajorAxisLength');
     
-    for i = 1 : size(statsright, 2)
-        if statsright(i).MajorAxisLength < 50
-            statsright(i) = [];
+    if size(statsright, 1) > 0
+        for i = 1 : size(statsright, 2)
+            if statsright(i).MajorAxisLength < 100
+                statsright(i) = [];
+            end
         end
     end
     
@@ -55,14 +59,16 @@ function[x, y, theta] = imagedetection()
     hold on
     imshow(BIL)
     title('Left binary image')
-    plot(centroidsleft(:,1),centroidsleft(:,2),'b*')
-    for i = 1 : length(orientsleft)
-        hlen = statsleft(i).MajorAxisLength/2;
-        cosOrient = cosd(orientsleft(i));
-        sinOrient = sind(orientsleft(i));
-        xcoords = centroidsleft(i,1) + hlen * [-cosOrient cosOrient];
-        ycoords = centroidsleft(i,2) + hlen * [sinOrient -sinOrient];
-        line(xcoords, ycoords);
+    if length(centroidsleft) > 0
+        plot(centroidsleft(:,1),centroidsleft(:,2),'b*')
+        for i = 1 : length(orientsleft)
+            hlen = statsleft(i).MajorAxisLength/2;
+            cosOrient = cosd(orientsleft(i));
+            sinOrient = sind(orientsleft(i));
+            xcoords = centroidsleft(i,1) + hlen * [-cosOrient cosOrient];
+            ycoords = centroidsleft(i,2) + hlen * [sinOrient -sinOrient];
+            line(xcoords, ycoords);
+        end
     end
     hold off
 
@@ -70,14 +76,16 @@ function[x, y, theta] = imagedetection()
     hold on
     imshow(BIR)
     title('Right binary image')
-    plot(centroidsright(:,1),centroidsright(:,2),'b*')
-    for i = 1 : length(orientsright)
-        hlen = statsright(i).MajorAxisLength/2;
-        cosOrient = cosd(orientsright(i));
-        sinOrient = sind(orientsright(i));
-        xcoords = centroidsright(i,1) + hlen * [-cosOrient cosOrient];
-        ycoords = centroidsright(i,2) + hlen * [sinOrient -sinOrient];
-        line(xcoords, ycoords);
+    if length(centroidsright) > 0
+        plot(centroidsright(:,1),centroidsright(:,2),'b*')
+        for i = 1 : length(orientsright)
+            hlen = statsright(i).MajorAxisLength/2;
+            cosOrient = cosd(orientsright(i));
+            sinOrient = sind(orientsright(i));
+            xcoords = centroidsright(i,1) + hlen * [-cosOrient cosOrient];
+            ycoords = centroidsright(i,2) + hlen * [sinOrient -sinOrient];
+            line(xcoords, ycoords);
+        end
     end
     hold off
 
@@ -98,16 +106,22 @@ function[x, y, theta] = imagedetection()
 
     Pleft = kleft*[Rleft, Tleft];
     Pright = kright*[Rright, Tright];
-
-    numObjs = length(centroidsright(:,1));
-    M =zeros(numObjs, 3);
-    for i=1:numObjs
-        uvleft = centroidsleft(i,:);
-        uvright = centroidsright(i,:);
-        M(i,:) = findXYZ(uvleft, uvright, Pleft, Pright);
-    end
+    
+    x = [];
+    y = [];
+    theta = [];
+    
+    if length(centroidsleft) > 0
+        numObjs = length(centroidsleft(:,1));
+        M =zeros(numObjs, 3);
+        for i=1:numObjs
+            uvleft = centroidsleft(i,:);
+            uvright = centroidsright(i,:);
+            M(i,:) = findXYZ(uvleft, uvright, Pleft, Pright);
+        end
+    
     x = M(:,1);
     y = M(:,2);
     theta = orientsleft;
-    
+    end
 end

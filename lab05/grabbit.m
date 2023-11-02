@@ -3,7 +3,12 @@ camworld_H_armworld = [[0 -1 0 310];[1 0 0 380];[0 0 1 327];[0 0 0 1]];
 while true   
     clearvars -except camworld_H_armworld
     
+%     disp('Moving to Ready Position')
+%     system('Puma_READY'); disp(' '); 
+%     pause(5)
+    
     % Run image detection to try to find cylinders
+    [returncode, ~] = system('save_single_image puma2 30');
     disp('Checking for objects...')
     [camx,camy,thetas] = imagedetection();
     
@@ -37,7 +42,7 @@ while true
 
     % Bounds checking to avoid collision with camera or monitors
     xthresh = 0;
-    ythresh = 0;
+    ythresh = 113;
 
     if robx(1) > xthresh || roby(1) < ythresh
        disp('Attempted to move OOB. Exiting...')
@@ -46,18 +51,24 @@ while true
 
     % Proceed with Movement
     % O= ?, A=90 , T=0
-    disp('Moving to Ready Position')
-    system('Puma_Ready');
-    % pause(2)
-%     disp('Moving to Object X/Y')
-%     system(Puma_MOVEXYZ robx(1) roby(1) 0 theta+rot_offset 90 0)
-%     pause(2)
-%     disp('Grabbing object')
-%     system(Pume_MOVEXYZ robx(1) roby(1) -186 theta+rot_offset 90 0)
-%     pause(2)
 %     disp('Moving to Ready Position')
-%     system('Puma_Ready')
-
+%     system('Puma_READY'); disp(' '); 
+%     pause(5)
+    disp('Moving to Object X/Y');  
+    system(sprintf('PumaMoveXYZOAT %d %d %d %d %d %d', robx(1), roby(1), 0, 270 + thetas(1), 90, 0));
+    pause(3)
+    system('openGripper &');
+    disp('Grabbing object')
+    system(sprintf('PumaMoveXYZOAT %d %d %d %d %d %d', robx(1), roby(1), -176, 270 + thetas(1), 90, 0));
+    pause(2)
+    system('closeGripper');
+    system(sprintf('PumaMoveXYZOAT %d %d %d %d %d %d', robx(1), roby(1), 0, 270 + thetas(1), 90, 0));
+    pause(1)
+    disp('Moving to Ready Position')
+    system('Puma_READY');
     pause(5)
+    system('openGripper &');
+    pause(2)
+    system('closeGripper');
     close all
 end
