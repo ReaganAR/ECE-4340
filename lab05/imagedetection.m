@@ -13,12 +13,16 @@ function[x, y, theta] = imagedetection()
 
     statsleft=regionprops(BIL, 'centroid', 'orientation', 'area', 'MajorAxisLength');
     if size(statsleft, 1) > 0
-        for i = 1 : size(statsleft, 2)
-            if statsleft(i).MajorAxisLength < 100
+        removed = 0;
+        for i = 1 : size(statsleft, 1)
+            i = i - removed;
+            if statsleft(i).MajorAxisLength < 100 || statsleft(i).Area > 8000 || statsleft(i).Area < 4000
                 statsleft(i) = [];
+                removed = removed + 1;
             end
         end
     end
+    
     
     centroidsleft = cat(1,statsleft.Centroid);
     orientsleft = cat(1,statsleft.Orientation);
@@ -26,9 +30,12 @@ function[x, y, theta] = imagedetection()
     statsright=regionprops(BIR, 'centroid', 'orientation',  'area', 'MajorAxisLength');
     
     if size(statsright, 1) > 0
-        for i = 1 : size(statsright, 2)
-            if statsright(i).MajorAxisLength < 100
+        removed = 0;
+        for i = 1 : size(statsright, 1)
+            i = i - removed;
+            if statsright(i).MajorAxisLength < 100 || statsright(i).Area > 8000 || statsright(i).Area < 4000
                 statsright(i) = [];
+                removed = removed + 1;
             end
         end
     end
@@ -48,7 +55,6 @@ function[x, y, theta] = imagedetection()
     subplot(rows,columns,3)
     imshow(BWL)
     title('Left BW image')
-
     subplot(rows,columns,4)
     imshow(BWR)
     title('Right BW image')
@@ -89,7 +95,7 @@ function[x, y, theta] = imagedetection()
     end
     hold off
 
-
+    
 
     % 3D reconstruction
     leftcal = load('images/Calib_Results_left.mat');
