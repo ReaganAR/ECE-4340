@@ -4,6 +4,8 @@ import math
 from forward import dh_array
 from forward import A_matrix
 
+import sys
+
 ''' CONSTANTS'''
 d2 = 125.4125
 d4 = 203.2
@@ -71,9 +73,27 @@ def revmain(matrix):
 
 
 if __name__ == "__main__":
-    input = np.array([[-5.55769053e-01, -4.29126588e-01,  7.12019053e-01,  281.917545],
-                    [ 6.12139290e-01,  3.68269053e-01,  6.99759526e-01,  323.724883],
-                    [-5.62500000e-01,  8.24759526e-01,  5.80127019e-02,  3.24469683],
-                    [ 0,  0,  0,  1]])
-    
+    if len(sys.argv) != 7:
+        print("Usage:",sys.argv[0],"x y z o a t\nWith XYZ in mm and OAT in degrees")
+        sys.exit()
+
+    inputs = [0,0,0,0,0,0]
+    for i in range(6):
+        inputs[i] = float(sys.argv[i + 1])
+    OAT = np.radians(inputs[3:6])
+
+    input = np.identity(4)
+    input = [[-math.sin(OAT[0])*math.sin(OAT[1])*math.cos(OAT[2]) + math.cos(OAT[0])*math.sin(OAT[2]),
+         math.sin(OAT[0])*math.sin(OAT[1])*math.sin(OAT[2]) + math.cos(OAT[0]) * math.cos(OAT[2]),
+         math.sin(OAT[0]) * math.cos(OAT[1]),0],
+        [math.cos(OAT[0])*math.sin(OAT[1])*math.cos(OAT[2]) + math.sin(OAT[0]) * math.sin(OAT[2]),
+         -math.cos(OAT[0])*math.sin(OAT[1])*math.sin(OAT[2]) + math.sin(OAT[0]) * math.cos(OAT[2]),
+         -math.cos(OAT[0]) * math.cos(OAT[1]),0],
+        [-math.cos(OAT[1]) * math.cos(OAT[2]), math.cos(OAT[1]) * math.sin(OAT[2]), -math.sin(OAT[1]),0],
+        [0,0,0,1]]
+
+    input[0][3] = inputs[0]
+    input[1][3] = inputs[1]
+    input[2][3] = inputs[2]
+
     print(revmain(input))

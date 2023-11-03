@@ -1,5 +1,5 @@
 from forward import formain
-from reverse import revmain
+from inverse import revmain
 
 import numpy as np
 import math
