@@ -1,6 +1,8 @@
 import numpy as np
 import math
 
+import sys
+
 dh_array=    [[0, 0, 0, -math.pi/2],
               [0, 125.4125, 203.2, 0],
               [0, 0, 0, math.pi/2],
@@ -61,6 +63,12 @@ def formain(thetas):
     return Tmatrix
 
 if __name__ == "__main__":
-    input = [30, 30, 30, 30, 30, 30]
+    if len(sys.argv) != 7:
+        print("Usage:",sys.argv[0],"deg deg deg deg deg deg")
+        sys.exit()
+
+    input = [0,0,0,0,0,0]
+    for i in range(6):
+        input[i] = float(sys.argv[i + 1])
     
     formain(input)
