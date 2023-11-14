@@ -1,0 +1,14 @@
+subscribers:
+  - name:        "Obstacle Avoidance input"
+    topic:       "/obstacle/cmd_vel"
+    timeout:     0.25
+    priority:    10
+  - name:        "Keyboard Operation input"
+    topic:       "/keyop/cmd_vel"
+    timeout:     1
+    priority:    8
+  - name:        "Camera Navigation"
+    topic:       "/camnav/cmd_vel"
+    timeout:     0.3
+    priority:    4
+publisher:       "/cmd_vel"
