@@ -22,6 +22,13 @@ GAIN_RHO = 0.3
 GAIN_ALPHA = 0.8
 GAIN_BETA = -0.15
 
+# GAIN_ALPHA = 0.4
+# GAIN_BETA = -0.05
+
+x = 0
+y = 0
+
+
 # quat2 = tf.transformations.quaternion_from_euler(-1.67493, 0.01726275, -1.575038333, axes='sxyz')
 # euler2 = tf.transformations.euler_from_quaternion(quat2)
 # rotation_matrix2 = numpy.array([[math.cos(euler2[2]), -math.sin(euler2[2]), 0],
@@ -41,10 +48,8 @@ def normalizeAngle(angle):
 
 # Calculates current rho alpha and beta and stores in global 'polarCoords'
 def cart2pol():
-    global polarCoords, mHr
+    global polarCoords, mHr, x, y
 
-    x = mHr[0,3]
-    y = mHr[1,3]
 
     rotation_matrix = numpy.identity(3)
     rotation_matrix[:3,:3] = mHr[:3,:3]
@@ -79,6 +84,9 @@ if __name__=='__main__':
 
     vel_msg = Twist()
 
+    llTrans = 0
+    llQuat = 0
+
     while not rospy.is_shutdown():
         mHc = numpy.identity(4)
 
@@ -88,6 +96,15 @@ if __name__=='__main__':
             rospy.logerr('cant find')
             rate.sleep()
             continue
+        # except Exception as error:
+        #     print(error)
+
+        if llTrans == trans and llQuat == quat:
+            rospy.logerr("Lost Tracking")
+            break
+
+        llTrans = trans
+        llQuat = quat
         
         euler = tf.transformations.euler_from_quaternion(quat)
         rotation_matrix = numpy.array([[math.cos(euler[2]), -math.sin(euler[2]), 0],
@@ -103,25 +120,26 @@ if __name__=='__main__':
         mHr = numpy.dot(mHc, numpy.linalg.inv(rHc)) # Robot w.r.t the marker (or marker to robot)
 
 
-        print('x:', mHr[0,3])
-        print('y:', mHr[1,3])
-        print('z:', mHr[2,3])
-        # print('x:', -mHr[2,3])
-        # print('y:', mHr[1,3])
-        # print('z:', -mHr[0,3])
+        x = -numpy.abs(mHr[2,3])
+        y = mHr[1,3]
+
+        x = x + 0.250 # Adjust stop position to not collide with marker
 
 
-        print(mHr)
-        rospy.logerr("STOP HERE")
-        
-
-        mHr[0,3] = math.abs(mHr[0,3]) - 0.15 # Adjust stop position to not collide with marker
+        # print('x:', x)
+        # print('y:', y)
+        # print('z:', mHr[0,3])
 
         cart2pol()
+
+        # print(polarCoords)
 
         vel_msg.linear.x = GAIN_RHO * polarCoords[0]
         vel_msg.angular.z = (GAIN_ALPHA * polarCoords[1]) + (GAIN_BETA * polarCoords[2])
         vel_pub.publish(vel_msg)
+
+        print('Linear Velocity:',vel_msg.linear.x)
+        print('Angular Velocity:',vel_msg.angular.z)
 
 
                 # Stop when close enough to threshold
@@ -129,6 +147,7 @@ if __name__=='__main__':
         angle_thresh = 0.15
 
         if abs(mHr[0,3]) <= pos_thresh and abs(mHr[1,3]) <= pos_thresh:
+            rospy.logwarn("At Goal")
             break
             
         rate.sleep()
