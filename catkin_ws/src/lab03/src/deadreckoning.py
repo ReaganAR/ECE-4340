@@ -78,15 +78,20 @@ def cart2pol():
     x = goal_H_curr[0,3]
     y = goal_H_curr[1,3]
 
+    rotation_matrix = numpy.identity(3)
+    rotation_matrix[:3,:3] = goal_H_curr[:3,:3]
+
+    euler = tf.transformations.euler_from_matrix(rotation_matrix)
+
     rho = numpy.sqrt(x ** 2 + y ** 2)
-    alpha = normalizeAngle(math.atan2(-y, -x) - rpy[2])
+    alpha = normalizeAngle(math.atan2(-y, -x) - euler[2])
     
     if (alpha > math.pi/2):
         alpha -= math.pi
     elif (alpha <= -math.pi):
         alpha += math.pi  
     
-    beta = -alpha - rpy[2]
+    beta = -alpha - euler[2]
 
     polarCoords[:3] = rho, alpha, beta
 
@@ -138,7 +143,7 @@ if __name__=='__main__':
         pos_thresh = 0.05
         angle_thresh = 0.15
 
-        if abs(goalCoords[0] - init_H_curr[0][3]) <= pos_thresh and abs(goalCoords[1] - init_H_curr[1][3]) <= pos_thresh and abs(goalCoords[2] - rpy[2]) <= angle_thresh:
+        if abs(goalCoords[0] - init_H_curr[0][3]) <= pos_thresh and abs(goalCoords[1] - init_H_curr[1][3]) <= pos_thresh:
             break
             
         rate.sleep()
