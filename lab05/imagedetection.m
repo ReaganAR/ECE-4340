@@ -1,4 +1,6 @@
-function[x, y, theta] = imagedetection()
+function[x, y, z, theta] = imagedetection()
+
+    
     I_left = imread('left30.ppm');
     I_right = imread('right30.ppm');
 
@@ -128,6 +130,7 @@ function[x, y, theta] = imagedetection()
     
     x = M(:,1);
     y = M(:,2);
+    z = M(:,3);
     theta = orientsleft;
     end
 end

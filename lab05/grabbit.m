@@ -1,4 +1,4 @@
-camworld_H_armworld = [[0 -1 0 310];[1 0 0 380];[0 0 1 327];[0 0 0 1]];
+camworld_H_armworld = [[0 -1 0 302];[1 0 0 385];[0 0 1 327];[0 0 0 1]];
 
 while true   
     clearvars -except camworld_H_armworld % Make sure no cylinders exist from previous iterations
@@ -6,7 +6,7 @@ while true
     % Run image detection to try to find cylinders
     [returncode, ~] = system('save_single_image puma2 30');
     disp('Checking for objects...')
-    [camx,camy,thetas] = imagedetection();
+    [camx,camy,camyz,thetas] = imagedetection()
     
     % If no cylinders are present, check again in 5 seconds
     if isempty(camx)
@@ -52,6 +52,8 @@ while true
     system('closeGripper');
     system(sprintf('PumaMoveXYZOAT %d %d %d %d %d %d', robx(1), roby(1), 0, 270 + thetas(1), 90, 0));
     pause(1)
+    system(sprintf('PumaMoveJoints -180 -20 103 29 50 154'))
+    pause(5)
     disp('Moving to Ready Position')
     system('Puma_READY');
     pause(5)

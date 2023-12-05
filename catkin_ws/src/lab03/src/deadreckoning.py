@@ -57,12 +57,7 @@ def odom_callback(odom_data):
         odom_data.pose.pose.orientation.w
     )
     
-    rpy = tf.transformations.euler_from_quaternion(quat)
-
-    init_H_curr[0,0] = math.cos(rpy[2])
-    init_H_curr[1,0] = math.sin(rpy[2])
-    init_H_curr[0,1] = -math.sin(rpy[2])
-    init_H_curr[1,1] = math.cos(rpy[2])
+    init_H_curr[:3,:3] = tf.transformations.quaternion_matrix(quat)[:3,:3]
 
 # Makes sure an angle is between -pi and +pi
 def normalizeAngle(angle):
@@ -117,7 +112,7 @@ if __name__=='__main__':
 
     rospy.init_node('dead_reckoning')
     odom_sub = rospy.Subscriber('odom', Odometry, odom_callback)
-    vel_pub = rospy.Publisher('cmd_vel', Twist, queue_size=1)
+    vel_pub = rospy.Publisher('/deadreckoning/cmd_vel', Twist, queue_size=1)
 
     rate = rospy.Rate(10)
 
@@ -135,7 +130,11 @@ if __name__=='__main__':
 
         cart2pol()
 
-        vel_msg.linear.x = GAIN_RHO * polarCoords[0]
+        linvel = GAIN_RHO * polarCoords[0]
+        if(linvel > 0.2):
+            linvel = 0.2
+
+        vel_msg.linear.x = linvel
         vel_msg.angular.z = (GAIN_ALPHA * polarCoords[1]) + (GAIN_BETA * polarCoords[2])
         vel_pub.publish(vel_msg)
 

@@ -6,7 +6,7 @@ subscribers:
   - name:        "Keyboard Operation input"
     topic:       "/keyop/cmd_vel"
     timeout:     1
-    priority:    8
+    priority:    3
   - name:        "Dead Reckoning"
     topic:       "/deadreckoning/cmd_vel"
     timeout:     0.3
