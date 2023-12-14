@@ -1,0 +1,10 @@
+subscribers:
+  - name:        "Obstacle Avoidance input"
+    topic:       "/obstacle/cmd_vel"
+    timeout:     0.25
+    priority:    10
+  - name:        "Challenge input"
+    topic:       "/challenge/cmd_vel"
+    timeout:     1
+    priority:    8
+publisher:       "/cmd_vel"
